@@ -1,0 +1,143 @@
+// Define a generic Database class that takes two type parameters: TKey and TValue.
+class Database<TKey, TValue>
+{
+ // Declare private fields for keys, values, and count.
+ private TKey[] keys;
+ private TValue[] values;
+ private int count;
+
+ // Constructor that initializes keys and values arrays with a size of 4 and sets count to 0.
+ public Database()
+ {
+  keys = new TKey[4];
+  values = new TValue[4];
+  count = 0;
+ }
+
+ // Method to add a key-value pair to the database.
+ public void Add(TKey key, TValue value)
+ {
+  // If the count is equal to the length of the keys array, resize the arrays to double their size.
+  if (count == keys.Length)
+  {
+   System.Array.Resize(ref keys, keys.Length * 2);
+   System.Array.Resize(ref values, values.Length * 2);
+  }
+  // Add the key-value pair to the end of the arrays and increment the count.
+  keys[count] = key;
+  values[count] = value;
+  count++;
+ }
+
+ // Method to remove a key-value pair from the database.
+ public bool Remove(TKey key)
+ {
+  // Find the index of the key in the keys array.
+  int index = System.Array.IndexOf(keys, key);
+  // If the key is not found, return false.
+  if (index == -1) return false;
+  // Shift all the elements after the index back by one position to remove the key-value pair.
+  for (int i = index; i < count - 1; i++)
+  {
+   keys[i] = keys[i + 1];
+   values[i] = values[i + 1];
+  }
+  // Decrement the count.
+  count--;
+  // If the count is less than a quarter of the keys array length, resize the arrays to half their size.
+  if (count < keys.Length / 4)
+  {
+   System.Array.Resize(ref keys, keys.Length / 2);
+   System.Array.Resize(ref values, values.Length / 2);
+  }
+  return true;
+ }
+
+ // Method to try to get a value from the database given a key.
+ public bool TryGetValue(TKey key, out TValue value)
+ {
+  // Find the index of the key in the keys array.
+  int index = System.Array.IndexOf(keys, key);
+  // If the key is not found, set the value to the default value of TValue and return false.
+  if (index == -1)
+  {
+   value = default;
+   return false;
+  }
+  // Otherwise, set the value to the corresponding value in the values array and return true.
+  value = values[index];
+  return true;
+ }
+
+ // Read-only property that returns the count of key-value pairs in the database.
+ public int Count
+ {
+  get { return count; }
+ }
+}
+
+
+class Program
+{
+ static void Main(string[] args)
+ {
+  // Create an instance of the Database class with TKey as int and TValue as string.
+  Database<int, string> db = new Database<int, string>();
+
+  // Add four key-value pairs to the database.
+  db.Add(1, "One");
+  db.Add(2, "Two");
+  db.Add(3, "Three");
+  db.Add(4, "Four");
+
+  // Print the count of items in the database and the value associated with key 2.
+  System.Console.WriteLine("Before remove:");
+  System.Console.WriteLine("Count: " + db.Count);
+  string value;
+  if (db.TryGetValue(2, out value))
+  {
+   System.Console.WriteLine("Value for key 2: " + value);
+  }
+
+  // Remove the key-value pair with key 1 from the database.
+  db.Remove(1);
+
+  // Print the count of items in the database and try to retrieve the value for key 1 (which should not exist).
+  System.Console.WriteLine("After remove:");
+  System.Console.WriteLine("Count: " + db.Count);
+  if (db.TryGetValue(1, out value))
+  {
+   System.Console.WriteLine("Value for key 1: " + value);
+  }
+
+  // Declare two integer variables and swap their values using the Swap method.
+  int a = 1, b = 2;
+  Swap(ref a, ref b);
+  System.Console.WriteLine("a = " + a + ", b = " + b);
+
+  // Declare two instances of the MyClass class and swap their values using the Swap method.
+  MyClass c1 = new MyClass(1), c2 = new MyClass(2);
+  Swap(ref c1, ref c2);
+  System.Console.WriteLine("c1.Value = " + c1.Value + ", c2.Value = " + c2.Value);
+
+  System.Console.ReadKey();
+ }
+
+ // This is a generic static method that swaps the values of two variables of type T.
+ static void Swap<T>(ref T a, ref T b)
+ {
+  T temp = a;
+  a = b;
+  b = temp;
+ }
+
+ // This is a private class MyClass with a public property Value and a constructor that sets its value.
+ class MyClass
+ {
+  public int Value { get; set; }
+  public MyClass(int value)
+  {
+   Value = value;
+  }
+ }
+}
