@@ -3,6 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using ECommerce;
+using College;
+using System.Security.Cryptography.X509Certificates;
+using System.CodeDom;
 
 namespace Collections
 {
@@ -475,18 +479,380 @@ namespace Collections
             }
             Console.WriteLine(myEmpStack.Count);
 
+
+
+            Console.WriteLine("\n\n -- QUEUE -- ");
+            Queue<string> myQueue = new Queue<string>();
+
+            myQueue.Enqueue("Task5");
+            myQueue.Enqueue("Task3");
+            myQueue.Enqueue("Task1");
+            myQueue.Enqueue("Task4");
+            myQueue.Enqueue("Task2");
+
+            Console.WriteLine($"\nCheckig the queue content");
+            foreach (var item in myQueue)
+            { 
+                Console.WriteLine(item);
+            }
+            string peekElement = myQueue.Peek();
+            Console.WriteLine($"Checking top element: {peekElement}");
+
+            string dequeElement = myQueue.Dequeue();
+            Console.WriteLine($"\nRetreaving element: {dequeElement}");
+            dequeElement = myQueue.Dequeue();
+            Console.WriteLine($"Retreaving element: {dequeElement}");
+            dequeElement = myQueue.Dequeue();
+            Console.WriteLine($"Retreaving element: {dequeElement}");
+            myQueue.Enqueue("Task6");
+
+
+            Console.WriteLine($"\nCheckig the queue content");
+            foreach (var item in myQueue)
+            {
+                Console.WriteLine(item);
+            }
+
+
+            dequeElement = myQueue.Dequeue();
+            Console.WriteLine($"\nRetreaving element: {dequeElement}");
+            dequeElement = myQueue.Dequeue();
+            Console.WriteLine($"Retreaving element: {dequeElement}");
+
+
+
+            Console.WriteLine("\n\n -- COLLECTION OF OBJECTS -- ");
+
+            List<Product> myProductsCollection = new List<Product>();
+            string choice;
+            do 
+            {
+                Console.Write("Enter Product ID: ");
+                int.TryParse(Console.ReadLine(), out int pid);
+
+                Console.Write("Enter Product Name: ");
+                string pName = Console.ReadLine();
+
+                Console.Write("Enter Product Price: ");
+                double.TryParse(Console.ReadLine(), out double pprice);
+
+                Console.Write("Enter manufacture date (YYYY-MM-DD): ");
+                DateTime.TryParse(Console.ReadLine(), out DateTime pManufDate);
+
+                Product product = new Product() 
+                { 
+                    ProductID = pid, 
+                    ProductName = pName, 
+                    Price = pprice, 
+                    DateOfManufactute = pManufDate
+                };
+
+                myProductsCollection.Add(product);
+
+                Console.WriteLine("Product added. \n\nDo you want to add another one? (Yes/No)");
+                choice = Console.ReadLine();
+            }
+            while (choice != "No" && choice != "no" && choice != "n" && choice != "N");
+            Console.WriteLine($"Products in collection: {myProductsCollection.Count}");
+
+            Console.WriteLine("Products:");
+            foreach (Product item in myProductsCollection)
+            {
+                Console.WriteLine(item.ProductID);
+                Console.WriteLine(item.ProductName);
+                Console.WriteLine(item.Price);
+                Console.WriteLine(item.DateOfManufactute.ToShortDateString());
+            }
+
+
+
+            Console.WriteLine("\n\n -- COLLECTION OF OBJECTS and OBJECT RELATIOS -- ");
+
+            Console.WriteLine("\nOne-to-One and One-to-Many relations");
+            Student student = new Student()
+            {
+                RollNumber = 1,
+                FName = "Sergey",
+                LName = "Molchun",
+                Email = "moser@email.com",
+                PhoneNumber = "0123456789",
+                branch = new Branch(),
+                examinations = new List<Examination>()
+            };
+
+            student.branch.BranchName = "CS";
+            student.branch.NumberOfSemesters = 4;
+            student.examinations.Add(new Examination() { ExaminationName = "CS", Mark = 5, Month = 1, Year = 2023, SecuredMark = 95 });
+            student.examinations.Add(new Examination() { ExaminationName = "C#", Mark = 5, Month = 1, Year = 2023, SecuredMark = 95 });
+            student.examinations.Add(new Examination() { ExaminationName = "Python", Mark = 5, Month = 7, Year = 2022, SecuredMark = 95 });
+            student.examinations.Add(new Examination() { ExaminationName = "DB", Mark = 5, Month = 7, Year = 2022, SecuredMark = 95 });
+
+            Console.WriteLine($"" +
+                $"Student No: {student.RollNumber}\n" +
+                $"Name: {student.FName} {student.LName}\n" +
+                $"Contacts: {student.Email} {student.PhoneNumber}\n" +
+                $"Branch: {student.branch.BranchName} - {student.branch.NumberOfSemesters} semesters\n" +
+                $"Examinations: {student.examinations.Count}: ");
+            foreach(Examination item in student.examinations)    
+            {
+               Console.WriteLine($"Examinations: {item.ExaminationName}: {item.Mark} (rate: {item.SecuredMark}) {item.Year}-{item.Month}");
+            }
+
+
+            Console.WriteLine("\nMany-to-One relations");
             
+            Department dept1 = new Department() { DepID = 1, DepName = "Development"};
+            Employee empl1 = new Employee() { ID=1, FName="Peter", LName = "Smith", Compensation = 100000, dept = dept1};
+            Employee empl2 = new Employee() { ID=2, FName="James", LName = "Gadought", Compensation = 120000, dept = dept1 };
+            Employee empl3 = new Employee() { ID=3, FName="Mathew", LName = "Arnor", Compensation = 150000, dept = dept1 };
+            Employee empl4 = new Employee() { ID=4, FName= "Andrew", LName = "Jones", Compensation = 110000, dept = dept1 };
+            List<Employee> employeeList = new List<Employee>();
+            employeeList.Add( empl1);
+            employeeList.Add( empl2);
+            employeeList.Add( empl3);
+            employeeList.Add( empl4);
+            foreach (Employee employee in employeeList) 
+            {
+                Console.WriteLine($"{employee.ID} {employee.FName} {employee.LName} {employee.dept.DepName}");
+            }
+
+
+
+
+            Console.WriteLine("\n\n -- COLLECTIONS HIERARCHY -- ");
+
+            IEnumerable<string> messages; //created a RefVar of IEnumerable (parent of List) for code flexibility
+            messages = new List<string>() {"First string", "Second string", "Third string" }; //assign object of child class to parent refVar
+            Console.WriteLine($"IEnumerable:");
+            foreach (string item in messages)
+            {
+                Console.WriteLine($"{item}");
+            }
+
+
+            Console.WriteLine("\n\n -- Iterator -- ");
+            Sample s = new Sample();
+            var enumerable1 = s.MyMethod();
+            var enumerator1 = enumerable1.GetEnumerator();
+            enumerator1.MoveNext();
+            Console.WriteLine(enumerator1.Current);
+            enumerator1.MoveNext();
+            Console.WriteLine(enumerator1.Current);
+            Console.WriteLine("\nUsing foreach loop:");
+
+            foreach (var item in enumerable1)
+            { 
+                Console.WriteLine(item);
+            }
+
+
+
+            Console.WriteLine("\n\n -- Custom Collections -- ");
+            CustomersList customersList = new CustomersList()
+            { 
+                new Customer(){ CustomerID = "C001", CustomerName = "Sergey M", CustomerEmail = "sm@gmaill.com", CustomerType=TypeOfCustomer.RegularDeveloper},
+                new Customer(){ CustomerID = "B001", CustomerName = "Tania R", CustomerEmail = "tr@gmaill.com", CustomerType=TypeOfCustomer.ProjectManager},
+            };
+
+            Customer new_cust = new Customer()
+            { CustomerID = "A001", CustomerName = "Irina S", CustomerEmail = "is@gmaill.com", CustomerType = TypeOfCustomer.DeparmentOfficer };
+            customersList.Add(new_cust);
+            Customer new_cust1 = new Customer()
+            { CustomerID = "S001", CustomerName = "Sergey D", CustomerEmail = "sd@gmaill.com", CustomerType = TypeOfCustomer.CEO };
+            customersList.Add(new_cust1);
+
+            foreach (Customer cust in customersList)
+            { 
+                Console.WriteLine(cust.CustomerID + " " + cust.CustomerName + " " + cust.CustomerEmail + " " + cust.CustomerType); 
+            }
+
+
+
+            Console.WriteLine("\n\n -- Custom Collections based on ICollection -- ");
+            CustomersCollectionList customersCollection = new CustomersCollectionList()
+            {
+                new Customer(){ CustomerID = "C101", CustomerName = "Sergey M", CustomerEmail = "sm@gmaill.com", CustomerType=TypeOfCustomer.RegularDeveloper},
+                new Customer(){ CustomerID = "B101", CustomerName = "Tania R", CustomerEmail = "tr@gmaill.com", CustomerType=TypeOfCustomer.ProjectManager},
+                new Customer(){ CustomerID = "C102", CustomerName = "Bogdan V", CustomerEmail = "bv@gmaill.com", CustomerType=TypeOfCustomer.RegularDeveloper}
+            };
+            Customer cust0 = new Customer()
+            { CustomerID = "B102", CustomerName = "Eduard L", CustomerEmail = "el@gmaill.com", CustomerType = TypeOfCustomer.ProjectManager };
+            customersCollection.Add(cust0);
+            Customer cust1 = new Customer()
+            { CustomerID = "A101", CustomerName = "Irina S", CustomerEmail = "is@gmaill.com", CustomerType = TypeOfCustomer.DeparmentOfficer };
+            customersCollection.Add(cust1);
+            Customer cust2 = new Customer()
+            { CustomerID = "S101", CustomerName = "Sergey D", CustomerEmail = "sd@gmaill.com", CustomerType = TypeOfCustomer.CEO };
+            customersCollection.Add(cust2);
+
+            Console.WriteLine($"Customer Collections contains {cust0.CustomerName} : {customersCollection.Contains(cust0)}");
+
+            foreach (Customer cust in customersCollection)
+            {
+                Console.WriteLine(cust.CustomerID + " " + cust.CustomerName + " " + cust.CustomerEmail + " " + cust.CustomerType);
+            }
+
+            var cust_rem = customersCollection.Find(x => x.CustomerName.StartsWith("Bogdan"));
+            Console.WriteLine($"Removing element: {cust_rem.CustomerName}: {customersCollection.Remove(cust_rem)}");
+            var find_cust = customersCollection.Find(cust => cust.CustomerName == "Tania R");
+            Console.WriteLine($"Customer Collections contains {find_cust.CustomerName} : {customersCollection.Contains(find_cust)}");
+
+            Console.WriteLine("\nSorting List objects by FNAME string field");
+            CustomComparer customComparer = new CustomComparer();
+            employeeList.Sort(customComparer);
+            foreach (Employee cust in employeeList)
+            {
+                Console.WriteLine(cust.ID + " " + cust.FName + " " + cust.LName + " " + cust.dept);
+            }
 
             Console.ReadKey();
 
+        }                                    
+    }
+
+    /// <summary>
+    /// -- Custom Collections section start --
+    /// </summary>
+    public enum TypeOfCustomer
+    {
+        RegularDeveloper, ProjectManager, DeparmentOfficer, CEO
+    }
+
+    public class Customer
+    { 
+        public string CustomerID { get; set; }                       
+        public string CustomerName { get; set; }
+        public string CustomerEmail { get; set; }
+        public TypeOfCustomer CustomerType { get; set; }
+    }
+
+    public class CustomersList : IEnumerable
+    { 
+        private List<Customer> customersList = new List<Customer>();
+
+        public IEnumerator GetEnumerator()
+        {
+            for (int i = 0; i < customersList.Count; i++)
+            { 
+                yield return customersList[i];
+            }
+        }
+
+        public void Add(Customer cust)
+        {
+            if (cust.CustomerID.Length < 5)
+            {
+                customersList.Add(cust);
+            }
+            else 
+            { 
+                Console.WriteLine("CustomerID length exceeds max length");
+            }
+        }
+    }
+
+    public class CustomersCollectionList : ICollection<Customer>
+    {
+        private List<Customer> customers = new List<Customer>();
+
+        public int Count => customers.Count;
+        public bool IsReadOnly => false;
+
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+             return this.GetEnumerator();
+        }
+
+        public IEnumerator<Customer> GetEnumerator()
+        {
+            for (int i = 0; i < customers.Count; i++)
+            {
+                yield return customers[i];
+            }
+        }
+
+        public void Add(Customer cust)
+        {
+            if (cust.CustomerID.Length < 5)
+            {
+                customers.Add(cust);
+            }
+            else
+            {
+                Console.WriteLine("CustomerID length exceeds max length");
+            }
+        }
+
+        public void Clear()
+        {
+            customers.Clear();
+        }
+
+        public bool Contains(Customer item)
+        {
+            return customers.Contains(item);
+        }
+
+        public void CopyTo(Customer[] array, int arrayIndex)
+        {
+            customers.CopyTo(array, arrayIndex);
+        }
+
+        public bool Remove(Customer item)
+        {
+            return customers.Remove(item);
+        }
+
+        public Customer Find(Predicate<Customer> match)
+        { 
+            return customers.Find(match);
+        }
+
+        public List<Customer> FindAll(Predicate<Customer> match)
+        { 
+            return customers.FindAll(match);
+        }
+    }
+
+    /// <summary>
+    /// -- Custom Collections section end --
+    /// </summary>
+
+    public class Sample
+    {
+        public List<double> Price { get; set; } = new List<double>() { 5, 12.5, 25.2, 32, 7, 11};
+        public IEnumerable<int> MyMethod()
+        { 
+            Console.WriteLine("Line 1");
+            yield return 10;
+            Console.WriteLine("Line 2");
+            yield return 20;
         }
     }
 
     public class Employee
     {
+       public int ID { set; get; }
        public string FName { set; get;}
        public string LName { set; get;}
-       public int ID { set; get;}
        public int Compensation { set; get;}
+
+        public Department dept { set; get;}
+    }
+
+    public class Department
+    { 
+        public int DepID { set; get;}
+        public string DepName { set; get;}
+
+    }
+
+    class CustomComparer : IComparer<Employee>
+    {
+        public int Compare(Employee x, Employee y)
+        { 
+            return x.FName.CompareTo(y.FName);
+        }
     }
 }
